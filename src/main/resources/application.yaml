@@ -1,0 +1,50 @@
+micronaut:
+  application:
+    name: wallet-service
+  server:
+    context-path: /api/wallet-service/v1/wallets
+
+security:
+  enabled: true
+  token:
+    jwt:
+      enabled: true
+      signatures:
+        secret:
+          generator:
+            secret: "secret-key"
+    authentication: bearer
+
+logger:
+  levels:
+    root: INFO
+    com.example.wallet: TRACE
+    org.hibernate: WARN
+    org.hibernate.orm.incubating: ERROR
+
+datasources:
+  default:
+    url: jdbc:postgresql://localhost:5432/wallet
+    username: wallet
+    password: root
+    driver-class-name: org.postgresql.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      connectionTimeout: 30000
+      idleTimeout: 600000
+      maxLifetime: 1800000
+      registerMbeans: true
+
+jpa:
+  default:
+    properties:
+      hibernate:
+        #db_structure_naming_strategy: legacy
+        naming:
+          implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        hbm2ddl:
+          auto: update
+        show_sql: false
+        format_sql: true
+        current_session_context_class: thread

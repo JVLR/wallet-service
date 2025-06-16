@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    container_name: postgresql
+    networks:
+      - recargapay
+    environment:
+      - POSTGRES_DATABASE=wallet
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+    volumes:
+      - ./database/db.sql:/docker-entrypoint-initdb.d/database.sql
+    ports:
+      - 5432:5432
+
+  api:
+    image: eclipse-temurin:21-jdk
+    container_name: wallet-api
+    depends_on:
+      - db
+    networks:
+      - recargapay
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/wallet
+      - SPRING_DATASOURCE_USERNAME=wallet
+      - SPRING_DATASOURCE_PASSWORD=root
+    volumes:
+      - ./target/wallet-service-1.0.0-SNAPSHOT.jar:/app/app.jar
+    working_dir: /app
+    command: [ "java", "-jar", "app.jar" ]
+    ports:
+      - 8080:8080
+
+networks:
+  recargapay:
+    driver: bridge
